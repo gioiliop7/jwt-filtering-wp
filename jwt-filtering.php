@@ -32,6 +32,14 @@ function jwt_filtering_settings_page() {
         // Merge the existing whitelisted endpoints with the new ones
         $whitelistedEndpoints = array_unique(array_merge($whitelistedEndpoints, $endpoints));
 
+        // Check for removed endpoints
+        $removedEndpoints = array_diff($whitelistedEndpoints, $endpoints);
+
+        // Remove the endpoints that are no longer in the form
+        $whitelistedEndpoints = array_diff($whitelistedEndpoints, $removedEndpoints);
+
+        var_dump($whitelistedEndpoints);
+
         // Save the updated whitelist to the database
         update_option('jwt_filterin_whitelisted_endpoints', $whitelistedEndpoints);
     }
