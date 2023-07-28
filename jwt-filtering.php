@@ -11,7 +11,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function jwt_filtering_menu_page() {
+function jwt_filtering_menu_page()
+{
     add_menu_page(
         'JWT Filtering',
         'JWT Filtering',
@@ -24,9 +25,14 @@ function jwt_filtering_menu_page() {
 }
 add_action('admin_menu', 'jwt_filtering_menu_page');
 
-function jwt_filtering_settings_page() {
+function jwt_filtering_settings_page()
+{
     if (isset($_POST['jwt_filterin_endpoints'])) {
         $endpoints = explode("\n", sanitize_textarea_field($_POST['jwt_filterin_endpoints']));
+
+        // Trim each endpoint to remove extra spaces
+        $endpoints = array_map('trim', $endpoints);
+
         $whitelistedEndpoints = get_option('jwt_filterin_whitelisted_endpoints', array());
 
         // Merge the existing whitelisted endpoints with the new ones
@@ -38,14 +44,12 @@ function jwt_filtering_settings_page() {
         // Remove the endpoints that are no longer in the form
         $whitelistedEndpoints = array_diff($whitelistedEndpoints, $removedEndpoints);
 
-        var_dump($whitelistedEndpoints);
-
         // Save the updated whitelist to the database
         update_option('jwt_filterin_whitelisted_endpoints', $whitelistedEndpoints);
     }
 
     $whitelistedEndpoints = get_option('jwt_filterin_whitelisted_endpoints', array());
-    ?>
+?>
     <div class="wrap">
         <h1>JWT Filtering Settings</h1>
         <form method="post" style="display:flex; flex-direction:column; gap:2rem;">
@@ -55,7 +59,7 @@ function jwt_filtering_settings_page() {
             <?php submit_button('Save Endpoints'); ?>
         </form>
     </div>
-    <?php
+<?php
 }
 
 add_filter('jwt_auth_whitelist', function ($endpoints) {
